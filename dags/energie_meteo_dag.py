@@ -1,36 +1,20 @@
 
 # DAG : permet de créer le workflow Airflow
 from airflow import DAG
-
-# PythonOperator : permet de transformer une fonction Python en tâche Airflow
 from airflow.operators.python import PythonOperator
-
-# datetime : pour définir la date de début du DAG
-
 from datetime import datetime, timedelta, date
-
-# pendulum : meilleure gestion des timezones, ici Europe/Paris
 import pendulum
-
-# requests : pour appeler les APIs Open-Meteo et éCO2mix
 import requests
-
-# logging : pour écrire des messages dans les logs Airflow
 import logging
-
-# json : pour générer le rapport final au format JSON
 import json
 
 
 # CONFIGURATION GLOBALE
 
-# Timezone locale utilisée par le DAG
-# Le TP travaille en heure de Paris
+
 local_tz = pendulum.timezone("Europe/Paris")
 
-# Dictionnaire des régions à analyser
-# Chaque région contient ses coordonnées géographiques
-# Ces coordonnées servent à interroger l’API Open-Meteo
+
 REGIONS = {
     "Île-de-France": {"lat": 48.8566, "lon": 2.3522},
     "Occitanie": {"lat": 43.6047, "lon": 1.4442},
