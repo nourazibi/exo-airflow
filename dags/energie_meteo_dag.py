@@ -93,20 +93,6 @@ def verifier_apis(**context):
 
 
 def collecter_meteo_regions(**context):
-    """
-    Récupère la météo pour les 5 régions.
-    Pour chaque région, on veut :
-    - la durée d’ensoleillement en heures
-    - la vitesse max du vent en km/h
-
-    Retour :
-    {
-        "Île-de-France": {"ensoleillement_h": 7.5, "vent_kmh": 18.2},
-        ...
-    }
-
-    Le return sera automatiquement stocké dans XCom par Airflow.
-    """
 
     base_url = "https://api.open-meteo.com/v1/forecast"
 
