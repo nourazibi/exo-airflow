@@ -54,10 +54,7 @@ default_args = {
 
 
 def verifier_apis(**context):
-    """
-    Vérifie que les deux APIs sont accessibles avant de lancer le pipeline.
-    Si une API échoue, on bloque le DAG avec une exception.
-    """
+
 
     # URLs minimales de test pour vérifier que les APIs répondent
     apis = {
@@ -164,16 +161,12 @@ def collecter_meteo_regions(**context):
 
 
 def collecter_production_electrique(**context):
-    """
-    Récupère la production électrique depuis l’API éCO2mix.
-    On calcule une moyenne des valeurs disponibles pour chaque région.
 
     Retour :
     {
         "Île-de-France": {"solaire_mw": 320.5, "eolien_mw": 82.0},
         ...
     }
-    """
 
     base_url = (
         "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets"
@@ -290,11 +283,8 @@ def analyser_correlation(**context):
 
 
 def generer_rapport_energie(**context):
-    """
-    Génère un rapport JSON et affiche un tableau comparatif dans les logs Airflow.
-    Sauvegarde le rapport dans /opt/airflow/logs/rapport_energie_<YYYY-MM-DD>.json.
-    Retourne le chemin du fichier généré.
-    """
+
+    
     ti = context["ti"]
     analyse = ti.xcom_pull(task_ids="analyser_correlation", key="return_value") or {}
     today = date.today().isoformat()
