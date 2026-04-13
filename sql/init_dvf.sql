@@ -1,11 +1,7 @@
--- Base DVF
 CREATE DATABASE dvf;
 
 \connect dvf;
 
--- -----------------------------------------------------------------
--- Table 1 : Transactions brutes Paris
--- -----------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS dvf_raw (
     id SERIAL PRIMARY KEY,
     date_mutation DATE,
@@ -33,9 +29,6 @@ CREATE INDEX IF NOT EXISTS idx_dvf_raw_type_local ON dvf_raw(type_local);
 CREATE INDEX IF NOT EXISTS idx_dvf_raw_date ON dvf_raw(date_mutation);
 CREATE INDEX IF NOT EXISTS idx_dvf_raw_code_postal ON dvf_raw(code_postal);
 
--- -----------------------------------------------------------------
--- Table 2 : Prix agrégés par arrondissement
--- -----------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS prix_m2_arrondissement (
     id SERIAL PRIMARY KEY,
     code_postal VARCHAR(10) NOT NULL,
@@ -58,9 +51,6 @@ CREATE INDEX IF NOT EXISTS idx_prix_arrdt
 CREATE INDEX IF NOT EXISTS idx_prix_annee_mois
     ON prix_m2_arrondissement(annee, mois);
 
--- -----------------------------------------------------------------
--- Table 3 : Statistiques globales marché Paris
--- -----------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS stats_marche (
     id SERIAL PRIMARY KEY,
     annee INTEGER NOT NULL,
@@ -71,6 +61,7 @@ CREATE TABLE IF NOT EXISTS stats_marche (
     arrdt_plus_cher INTEGER,
     arrdt_moins_cher INTEGER,
     surface_mediane NUMERIC(10, 2),
+    variation_median_pct NUMERIC(10, 2),
     date_calcul TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (annee, mois)
 );

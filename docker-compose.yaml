@@ -120,11 +120,11 @@ services:
       airflow-init:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname $$HOSTNAME"]
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
-      start_period: 40s
+      start_period: 60s
     networks:
       - dvf-network
 
@@ -132,8 +132,8 @@ services:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: dvf-namenode
     ports:
-        - "9870:9870"
-        - "9001:9000"
+      - "9870:9870"
+      - "9001:9000"
     environment:
       CLUSTER_NAME: dvf-cluster
       CORE_CONF_fs_defaultFS: hdfs://hdfs-namenode:9000
@@ -141,6 +141,7 @@ services:
       HDFS_CONF_dfs_webhdfs_enabled: "true"
       HDFS_CONF_dfs_permissions_enabled: "false"
       HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check: "false"
+      HDFS_CONF_dfs_replication: "2"
     volumes:
       - namenode-data:/hadoop/dfs/name
     networks:
@@ -156,9 +157,29 @@ services:
       CORE_CONF_hadoop_http_staticuser_user: root
       HDFS_CONF_dfs_webhdfs_enabled: "true"
       HDFS_CONF_dfs_permissions_enabled: "false"
+      HDFS_CONF_dfs_replication: "2"
       SERVICE_PRECONDITION: "hdfs-namenode:9870"
     volumes:
       - datanode-data:/hadoop/dfs/data
+    depends_on:
+      - hdfs-namenode
+    networks:
+      - dvf-network
+
+  hdfs-datanode-2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: dvf-datanode-2
+    ports:
+      - "9865:9864"
+    environment:
+      CORE_CONF_fs_defaultFS: hdfs://hdfs-namenode:9000
+      CORE_CONF_hadoop_http_staticuser_user: root
+      HDFS_CONF_dfs_webhdfs_enabled: "true"
+      HDFS_CONF_dfs_permissions_enabled: "false"
+      HDFS_CONF_dfs_replication: "2"
+      SERVICE_PRECONDITION: "hdfs-namenode:9870"
+    volumes:
+      - datanode2-data:/hadoop/dfs/data
     depends_on:
       - hdfs-namenode
     networks:
@@ -168,6 +189,7 @@ volumes:
   postgres-data:
   namenode-data:
   datanode-data:
+  datanode2-data:
 
 networks:
   dvf-network:
